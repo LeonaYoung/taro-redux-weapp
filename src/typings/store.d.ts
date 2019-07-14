@@ -34,6 +34,7 @@ declare namespace StoreState {
 
   export interface IndexState {
     count: number;
+    userList: any[];
   }
   export interface NewSongState {
     newestList: any

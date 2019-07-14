@@ -1,6 +1,7 @@
 import modelExtend from 'dva-model-extend'
 import { model } from '../utils/model'
-// import Action from '../utils/action'
+import { getUserList as fetchUserList } from '../services/index'
+import Action from '../utils/action'
 // import { setCacheData, getGlobalData } from '../utils'
 // import {
 //   getSongInfo as fetchSongInfo,
@@ -14,6 +15,7 @@ export default modelExtend(model,  {
   namespace: 'main',
   state: {
     count: 11,
+    userList: [],
   },
   reducers: {
     changeCount(state, { payload }) {
@@ -23,4 +25,19 @@ export default modelExtend(model,  {
       }
     }
   },
+  effects: {
+    *fetchUserList({ payload }, { select, call, put }) {
+      const { userList } =  yield select(state => state.main),
+            { callback } = payload
+      try {
+        const res = yield call(fetchUserList)
+        let filterList = res
+        yield put(Action('updateState', { userList: filterList }))
+        callback && callback()
+      } catch(e) {
+        console.error(e)
+        callback && callback()
+      }
+    }
+  }
 })

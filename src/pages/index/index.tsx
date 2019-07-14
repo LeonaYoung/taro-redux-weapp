@@ -4,7 +4,7 @@ import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
 
 // import { add, minus, asyncAdd } from '../../actions/counter'
-import { updateState } from '../../actions/index'
+import { fetchUserList, updateState } from '../../actions/index'
 import './index.scss'
 
 // #region 书写注意
@@ -17,43 +17,8 @@ import './index.scss'
 //
 // #endregion
 
-// type PageStateProps = {
-//   counter: {
-//     num: number
-//   }
-// }
-
-// type PageDispatchProps = {
-//   add: () => void
-//   dec: () => void
-//   asyncAdd: () => any
-// }
-
-// type PageOwnProps = {}
-
-// type PageState = {}
-
-// type IProps = PageStateProps & PageDispatchProps & PageOwnProps
-
-// interface Index {
-//   props: IProps;
-// }
-
-// @connect(({ counter }) => ({
-//   counter
-// }), (dispatch) => ({
-//   add () {
-//     dispatch(add())
-//   },
-//   dec () {
-//     dispatch(minus())
-//   },
-//   asyncAdd () {
-//     dispatch(asyncAdd())
-//   }
-// }))
-
 interface IndexProps {
+  onFetchUserList: (payload?: { callback?: any }) => any;
   onUpdateState: (namespace: string, payload: any) => any;
   main: StoreState.IndexState;
 }
@@ -62,6 +27,7 @@ const mapStateToProps = ({ main }) => ({
   main,
 })
 const mapDispatchToProps = ({
+  onFetchUserList: fetchUserList,
   onUpdateState: updateState
 })
 
@@ -89,9 +55,9 @@ class Index extends Component<IndexProps, {}> {
 
   componentDidHide () { }
   handleClick = () => {
-    console.log('update');
     const { count } = this.props.main;
     this.props.onUpdateState('main', { count: count + 1 })
+    this.props.onFetchUserList({})
   }
   render () {
     return (
@@ -100,6 +66,7 @@ class Index extends Component<IndexProps, {}> {
         {/* <Button className='dec_btn' onClick={this.props.dec}>-</Button>
         <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button> */}
         <View><Text>{this.props.main.count}</Text></View>
+        <View><Text>{this.props.main.userList[0] && this.props.main.userList[0].chinesename}</Text></View>
         <View><Text>Hello, World</Text></View>
       </View>
     )
@@ -113,4 +80,4 @@ class Index extends Component<IndexProps, {}> {
 //
 // #endregion
 
-export default Index as ComponentClass<PageOwnProps, PageState>
+export default Index
