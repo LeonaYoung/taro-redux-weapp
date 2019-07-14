@@ -2,9 +2,11 @@ import '@tarojs/async-await'
 import Taro, { Component, Config } from '@tarojs/taro'
 import { Provider } from '@tarojs/redux'
 
+import dva from './store'
+import models from './models/index'
 import Index from './pages/index'
 
-import configStore from './store'
+// import configStore from './store'
 
 import './app.scss'
 
@@ -14,7 +16,13 @@ import './app.scss'
 //   require('nerv-devtools')
 // }
 
-const store = configStore()
+// const store = configStore()
+
+const dvaApp = dva.createApp({
+  initialState: {},
+  models: models
+})
+const store = dvaApp.getStore()
 
 class App extends Component {
 
@@ -28,7 +36,7 @@ class App extends Component {
   config: Config = {
     pages: [
       'pages/index/index',
-      'pages/log/index'
+      // 'pages/log/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -36,21 +44,21 @@ class App extends Component {
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
     },
-    tabBar: {
-      color: '#666666',
-      selectedColor: '#FA481F',
-      list: [
-        {
-          pagePath: 'pages/index/index',
-          text: '首页'
-        },
-        {
-          pagePath: 'pages/log/index',
-          text: '日志'
-        },
-      ],
-      borderStyle: 'black',
-    }
+    // tabBar: {
+    //   color: '#666666',
+    //   selectedColor: '#FA481F',
+    //   list: [
+    //     {
+    //       pagePath: 'pages/index/index',
+    //       text: '首页'
+    //     },
+    //     {
+    //       pagePath: 'pages/log/index',
+    //       text: '日志'
+    //     },
+    //   ],
+    //   borderStyle: 'black',
+    // }
   }
 
   componentDidMount () {}

@@ -1,28 +1,35 @@
-import { createStore, applyMiddleware, compose } from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import rootReducer from '../reducers'
+import { create } from 'dva-core'
+import { createLogger } from 'redux-logger'
+import createLoading from 'dva-loading'
 
-const composeEnhancers =
-  typeof window === 'object' &&
-  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?   
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
-    }) : compose
+let app, store, dispatch
 
-const middlewares = [
-  thunkMiddleware
-]
+function createApp(options?: any) {
+  const { models } = options
+  if (process.env.NODE_ENV === 'development') {
+    options.onAction = [createLogger()]
+  }
+  app = create({
+    ...options
+  })
+  app.use(createLoading({}))
 
-if (process.env.NODE_ENV === 'development') {
-  middlewares.push(require('redux-logger').createLogger())
+  if (!global.registered) models.forEach((model) => app.model(model))
+  global.registered = true
+  app.start()
+
+  store = app._store
+  app.getStore = () => store
+
+  dispatch = store.dispatch
+
+  app.dispatch = dispatch
+  return app
 }
 
-const enhancer = composeEnhancers(
-  applyMiddleware(...middlewares),
-  // other store enhancers if any
-)
-
-export default function configStore () {
-  const store = createStore(rootReducer, enhancer)
-  return store
+export default {
+  createApp,
+  getDispatch() {
+    return app.dispatch
+  }
 }

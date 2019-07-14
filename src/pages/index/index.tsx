@@ -3,8 +3,8 @@ import Taro, { Component, Config } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
 
-import { add, minus, asyncAdd } from '../../actions/counter'
-
+// import { add, minus, asyncAdd } from '../../actions/counter'
+import { updateState } from '../../actions/index'
 import './index.scss'
 
 // #region 书写注意
@@ -17,42 +17,56 @@ import './index.scss'
 //
 // #endregion
 
-type PageStateProps = {
-  counter: {
-    num: number
-  }
+// type PageStateProps = {
+//   counter: {
+//     num: number
+//   }
+// }
+
+// type PageDispatchProps = {
+//   add: () => void
+//   dec: () => void
+//   asyncAdd: () => any
+// }
+
+// type PageOwnProps = {}
+
+// type PageState = {}
+
+// type IProps = PageStateProps & PageDispatchProps & PageOwnProps
+
+// interface Index {
+//   props: IProps;
+// }
+
+// @connect(({ counter }) => ({
+//   counter
+// }), (dispatch) => ({
+//   add () {
+//     dispatch(add())
+//   },
+//   dec () {
+//     dispatch(minus())
+//   },
+//   asyncAdd () {
+//     dispatch(asyncAdd())
+//   }
+// }))
+
+interface IndexProps {
+  onUpdateState: (namespace: string, payload: any) => any;
+  main: StoreState.IndexState;
 }
 
-type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
-}
+const mapStateToProps = ({ main }) => ({
+  main,
+})
+const mapDispatchToProps = ({
+  onUpdateState: updateState
+})
 
-type PageOwnProps = {}
-
-type PageState = {}
-
-type IProps = PageStateProps & PageDispatchProps & PageOwnProps
-
-interface Index {
-  props: IProps;
-}
-
-@connect(({ counter }) => ({
-  counter
-}), (dispatch) => ({
-  add () {
-    dispatch(add())
-  },
-  dec () {
-    dispatch(minus())
-  },
-  asyncAdd () {
-    dispatch(asyncAdd())
-  }
-}))
-class Index extends Component {
+@connect(mapStateToProps, mapDispatchToProps)
+class Index extends Component<IndexProps, {}> {
 
     /**
    * 指定config的类型声明为: Taro.Config
@@ -74,14 +88,18 @@ class Index extends Component {
   componentDidShow () { }
 
   componentDidHide () { }
-
+  handleClick = () => {
+    console.log('update');
+    const { count } = this.props.main;
+    this.props.onUpdateState('main', { count: count + 1 })
+  }
   render () {
     return (
       <View className='index'>
-        <Button className='add_btn' onClick={this.props.add}>+</Button>
-        <Button className='dec_btn' onClick={this.props.dec}>-</Button>
-        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
-        <View><Text>{this.props.counter.num}</Text></View>
+        <Button className='add_btn' onClick={this.handleClick}>click</Button>
+        {/* <Button className='dec_btn' onClick={this.props.dec}>-</Button>
+        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button> */}
+        <View><Text>{this.props.main.count}</Text></View>
         <View><Text>Hello, World</Text></View>
       </View>
     )
